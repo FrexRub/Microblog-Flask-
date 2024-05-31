@@ -1,5 +1,7 @@
+from sqlalchemy.ext.hybrid import hybrid_property
+
 # for docker
-from src.database import db
+from src.app import db
 
 # for alembic
 # from ..src.database import Base
@@ -64,7 +66,7 @@ class Tweet(db.Model):
         lazy="selectin",
     )
 
-    @db.hybrid_property
+    @hybrid_property
     def like_count(self):
         query = db.select(db.func.count(LikesTweet.tweet_id)).where(
             LikesTweet.tweet_id == self.id

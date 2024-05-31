@@ -1,9 +1,4 @@
-from flask_sqlalchemy import SQLAlchemy
-import psycopg2
-
 from src.config import setting
-
-db = SQLAlchemy()
 
 db_url = (
     f"postgresql+psycopg2://{setting.postgres_user}:{setting.postgres_password}@{setting.postgres_host}:"
