@@ -1,8 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
-from src.view_users import router as router_user
-from src.database import db_url
+from database import db_url
 
 db = SQLAlchemy()
 

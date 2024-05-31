@@ -1,7 +1,7 @@
-from flask import Blueprint
+from flask import Blueprint, jsonify
 
-# from src.app import db
-# from src.models import User
+from app import db
+from models import User
 
 
 router = Blueprint('router', __name__)
@@ -12,7 +12,9 @@ def get_user_me():
     return "User/me"
 
 
-# @router.route("/all")
-# def get_user_all():
-#     users = db.session.query(User).all()
-#     return {"user": users}
+@router.route("/all")
+def get_user_all():
+    users = db.session.query(User).all()
+    for user in users:
+        print(user.name)
+    return jsonify({"users": "full"})

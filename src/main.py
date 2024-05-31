@@ -1,9 +1,6 @@
-from flask import Flask
-
 from app import MyServer
 from view_users import router as router_user
 
-# app = Flask(__name__)
 app = MyServer(__name__)
 app.set_config()
 app.register_blueprint(router_user, url_prefix="/api/users")
