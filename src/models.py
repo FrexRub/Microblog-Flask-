@@ -1,11 +1,6 @@
 from sqlalchemy.ext.hybrid import hybrid_property
 
-# for docker
-from src.app import db
-
-# for alembic
-# from ..src.database import Base
-
+from app import db
 
 followers = db.Table(
     "followers",
