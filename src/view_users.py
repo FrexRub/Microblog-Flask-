@@ -1,11 +1,10 @@
 from flask import Blueprint, jsonify, request
-from flasgger import ValidationError
 
 from app import db
 from exceptions import UnicornException
 from models import User
 
-# import schemas
+from schemas import UserSchema
 
 
 router = Blueprint('router', __name__)
@@ -25,8 +24,11 @@ def get_user_me():
 
 @router.route("/all")
 def get_user_all():
+    users_schema = UserSchema(many=True)
     users = db.session.query(User).all()
+    print("valiate", users_schema.validate(users))
+    result = users_schema.dump(users)
+    print(result)
     for user in users:
         print(user.name)
-    # return jsonify(schemas.User.dump(users))
-    return jsonify({"user": "User"})
+    return jsonify(result)

@@ -1,12 +1,11 @@
 from flask import json
 from werkzeug.exceptions import default_exceptions
 
-from app import MyServer
+from app import app
 from view_users import router as router_user
 from exceptions import UnicornException
 
-app = MyServer(__name__)
-app.set_config()
+
 app.register_blueprint(router_user, url_prefix="/api/users")
 
 default_exceptions[418] = UnicornException
@@ -22,6 +21,7 @@ def handle_exception_418(e):
     })
     response.content_type = "application/json"
     return response
+
 
 app.register_error_handler(418, handle_exception_418)
 

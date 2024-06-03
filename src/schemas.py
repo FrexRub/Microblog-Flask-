@@ -1,5 +1,5 @@
-from flasgger import Schema, fields, ValidationError
-from marshmallow import validates, post_load
+from app import ma
+from models import User
 
 
 # from typing import List
@@ -24,9 +24,11 @@ from marshmallow import validates, post_load
 #     media_id: int = Field(..., title="Media ID")
 #
 #
-class User(Schema):
-    id = fields.Int(dump_only=True)
-    name: str = fields.Str(required=True)
+class UserSchema(ma.SQLAlchemySchema):
+    class Meta:
+        # model = User
+        fields = ("id", "name")
+
 #
 #
 # class UserAll(User):
