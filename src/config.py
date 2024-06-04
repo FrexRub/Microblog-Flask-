@@ -1,6 +1,8 @@
 import os
+from pathlib import Path
 from dataclasses import dataclass
 
+BASE_DIR = Path(__file__).parent
 
 @dataclass(slots=True)
 class Setting:

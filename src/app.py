@@ -17,7 +17,7 @@ class MyServer(Flask):
         self.config['SWAGGER'] = {
             'title': 'API Microlog',
             'uiversion': 3,
-            'specs_route': "/docs/"
+            'specs_route': "/api/docs/"
         }
 
 
