@@ -6,7 +6,7 @@ from app import db
 from exceptions import UnicornException
 from models import User
 from schemas import UserSchema
-from utils import get_users_all
+from utils import get_users_all, get_users_my
 
 router = Blueprint('router', __name__)
 
@@ -23,6 +23,7 @@ def get_user_me():
         данные пользователя и статус ответа
     """
     api_key: str = request.headers.get("api-key", "test")
+    get_users_my(api_key)
     # if api_key is None:
     #     raise UnicornException(
     #         result=False,
