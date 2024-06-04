@@ -9,3 +9,5 @@ def get_users_all():
     print("valiate", users_schema.validate(users))
     result = users_schema.dump(users)
     return result
+
+
