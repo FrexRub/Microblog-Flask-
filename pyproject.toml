@@ -13,6 +13,7 @@ psycopg2 = "^2.9.9"
 sqlalchemy = "^2.0.30"
 flask-marshmallow = "^1.2.1"
 marshmallow-sqlalchemy = "^1.0.0"
+flasgger = "0.9.7b2"
 
 [tool.poetry.dev-dependencies]
 

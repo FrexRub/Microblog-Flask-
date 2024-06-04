@@ -14,6 +14,11 @@ class MyServer(Flask):
         self.config['JSON_SORT_KEYS'] = False
         self.config['SECRET_KEY'] = 'secret'
         self.config['SQLALCHEMY_DATABASE_URI'] = db_url
+        self.config['SWAGGER'] = {
+            'title': 'API Microlog',
+            'uiversion': 3,
+            'specs_route': "/docs/"
+        }
 
 
 app = MyServer(__name__)

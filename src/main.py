@@ -1,4 +1,5 @@
 from flask import json
+from flasgger import Swagger
 from werkzeug.exceptions import default_exceptions
 
 from app import app
@@ -7,6 +8,7 @@ from exceptions import UnicornException
 
 
 app.register_blueprint(router_user, url_prefix="/api/users")
+swagger = Swagger(app)
 
 default_exceptions[418] = UnicornException
 
