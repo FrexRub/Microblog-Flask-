@@ -1,4 +1,4 @@
-from flask import Blueprint, make_response, request, Response
+from flask import Blueprint, make_response, request
 from flasgger import swag_from
 from typing import List, Optional
 

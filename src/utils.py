@@ -2,7 +2,7 @@ from typing import Tuple, List, Optional, Literal
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
 from schemas import UserSchema
-from models import User
+from models import User, TweetMedia
 from app import db
 from exceptions import UnicornException
 
@@ -105,3 +105,37 @@ def user_following(id_follower: int, apy_key_user: str, metod: Literal["followin
         else:
             db.session.commit()
             return True
+
+
+def add_file_media(apy_key_user: str, name_file: str):
+    """
+    Добавляет в БД имя прикрепленного к твиттеру файла
+    :param apy_key_user: str
+        ключ пользователя
+    :param name_file: str
+        имя файла
+    :return: Option[int]
+        ID новой записи (при успешном добавлении в БД)
+    """
+    new_media: TweetMedia = TweetMedia(name_file=name_file)
+    data_user: Optional[User] = get_user_by_apy_key(apy_key_user)
+
+    if data_user is None:
+        raise UnicornException(
+            result=False,
+            error_type="Пользователь не найден",
+            error_message=f"Пользователь с ключом {apy_key_user} не найден",
+        )
+
+    try:
+        db.session.add(new_media)
+    except db.exc.SQLAlchemyError:
+        db.session.rollback()
+        raise UnicornException(
+            result=False,
+            error_type="File not append",
+            error_message="ошибка записи в БД",
+        )
+    else:
+        db.session.commit()
+    return new_media.media_id
