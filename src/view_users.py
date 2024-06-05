@@ -90,7 +90,7 @@ def post_user_follow(id: int):
         result: bool = user_following(id_follower=id, apy_key_user=api_key, metod="following")
 
     if request.method == "DELETE":
-        result: bool = user_following(id_follower=id, apy_key_user=api_key, metod="following")
+        result: bool = user_following(id_follower=id, apy_key_user=api_key, metod="unfollowing")
 
     response_info = {"result": result}
     if result:
