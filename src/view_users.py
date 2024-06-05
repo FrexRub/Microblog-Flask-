@@ -1,10 +1,10 @@
-from flask import Blueprint, make_response, request
+from flask import Blueprint, make_response, request, Response
 from flasgger import swag_from
 from typing import List, Optional
 
 from models import User
 from schemas import UserSchema
-from utils import get_users_my, get_user_id
+from utils import get_users_my, get_user_id, user_following
 
 router = Blueprint('router', __name__)
 
@@ -41,7 +41,7 @@ def get_user_me():
     return make_response(user_info, 200)
 
 
-@router.get("/<int:id>")
+@router.route("/<int:id>", methods=["GET"])
 @swag_from('swagger/get_user_id.yml')
 def get_user_id_(id: int):
     """
@@ -70,3 +70,27 @@ def get_user_id_(id: int):
     }
 
     return make_response(user_info, 200)
+
+
+@router.route("/<int:id>/follow", methods=["POST"])
+@swag_from('swagger/post_user_follow.yml')
+def post_user_follow(id: int):
+    """
+    Обработка запроса на добавление в друзья выбранного пользователя
+    :param id: int
+        ID выбранного пользователя
+    :param api_key: str
+        ключ текущего пользователя
+    :return: schemas.ResultClass
+        статус ответа
+    """
+    api_key: str = request.headers.get("api-key", "test")
+    result: bool = user_following(id_follower=id, apy_key_user=api_key)
+
+    response_info = {"result": result}
+    if result:
+        status_cod = 201
+    else:
+        status_cod = 400
+
+    return make_response(response_info, status_cod)

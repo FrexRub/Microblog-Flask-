@@ -1,0 +1,51 @@
+tags:
+  - users
+summary: Post User Follow
+description: Post User Follow
+operationId: post user follow
+parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: integer
+      exclusiveMinimum: 0
+      title: Id
+  - name: api-key
+    in: header
+    required: true
+    schema:
+      type: string
+      title: Api-Key
+definitions:
+    ResultClass:
+      properties:
+        rusult:
+          type: boolean
+          title: Response status
+      type: object
+      required:
+        - rusult
+      title: ResultClass
+
+    ValidationError:
+      properties:
+        error_message:
+          type: string
+          title: Error Message
+        error_type:
+          type: string
+          title: Error Type
+        rusult:
+          type: boolean
+          title: Response status
+      title: ValidationError
+responses:
+  201:
+    description:
+    schema:
+      $ref: '#/definitions/ResultClass'
+  418:
+    description:
+    schema:
+      $ref: '#/definitions/ValidationError'
