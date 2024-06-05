@@ -72,7 +72,7 @@ def get_user_id_(id: int):
     return make_response(user_info, 200)
 
 
-@router.route("/<int:id>/follow", methods=["POST"])
+@router.route("/<int:id>/follow", methods=["POST", "DELETE"])
 @swag_from('swagger/post_user_follow.yml')
 def post_user_follow(id: int):
     """
@@ -85,7 +85,12 @@ def post_user_follow(id: int):
         статус ответа
     """
     api_key: str = request.headers.get("api-key", "test")
-    result: bool = user_following(id_follower=id, apy_key_user=api_key)
+
+    if request.method == "POST":
+        result: bool = user_following(id_follower=id, apy_key_user=api_key, metod="following")
+
+    if request.method == "DELETE":
+        result: bool = user_following(id_follower=id, apy_key_user=api_key, metod="following")
 
     response_info = {"result": result}
     if result:

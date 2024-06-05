@@ -1,4 +1,4 @@
-from typing import Tuple, List, Optional
+from typing import Tuple, List, Optional, Literal
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
 from schemas import UserSchema
@@ -58,7 +58,7 @@ def get_user_id(id_user: int) -> Tuple[User, List[User], List[User]]:
     return user, following, followers
 
 
-def user_following(id_follower: int, apy_key_user: str) -> bool:
+def user_following(id_follower: int, apy_key_user: str, metod: Literal["following", "unfollowing"]) -> bool:
     """
     Добавление подписчика пользователю
     :param id_follower: int
@@ -86,11 +86,22 @@ def user_following(id_follower: int, apy_key_user: str) -> bool:
             error_message=f"Пользователь с ключом {id_follower} не найден",
         )
 
-    try:
-        data_user.following.append(user_folower)
-        db.session.commit()
-    except db.exc.IntegrityError:
-        db.session.rollback()
-        return False
-    else:
-        return True
+    if metod == "following":
+        try:
+            data_user.following.append(user_folower)
+            db.session.commit()
+        except db.exc.IntegrityError:
+            db.session.rollback()
+            return False
+        else:
+            return True
+
+    if metod == "unfollowing":
+        try:
+            data_user.following.remove(user_folower)
+        except db.exc.SQLAlchemyError:
+            db.session.rollback()
+            return False
+        else:
+            db.session.commit()
+            return True
