@@ -1,15 +1,15 @@
 tags:
   - users
-summary: Get User Me
-description: Get User Me
-operationId: get user me by api_key
+summary: Get User by ID
+description: Get User by ID
+operationId: get user me by id
 parameters:
-  - name: api-key
-    in: header
+  - name: id
+    in: path
     required: false
     schema:
       type: string
-      title: Api-Key
+      title: ID user
 definitions:
   UserAll:
       properties:
