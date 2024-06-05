@@ -23,40 +23,25 @@ def get_user_me():
         данные пользователя и статус ответа
     """
     api_key: str = request.headers.get("api-key", "test")
-    get_users_my(api_key)
-    # if api_key is None:
-    #     raise UnicornException(
-    #         result=False,
-    #         error_type="Ошибка заголовка",
-    #         error_message="В запросе отсутствует заголовок",
-    #     )
+    me_data, following, followers = get_users_my(api_key)
 
-    # res = get_user_me_from_db(api_key)
+    schema_user_following = UserSchema(many=True)
+    user_following = schema_user_following.dump(following)
 
-    #
-    # me_data, following, followers = res
-    # user_followers= [
-    #     UserSchema(id=i_user.id, name=i_user.name) for i_user in followers
-    # ]
-    # user_following = [
-    #     UserSchema(id=i_user.id, name=i_user.name) for i_user in following
-    # ]
-    # user_me = schemas.UserAll(
-    #     id=me_data.id,
-    #     name=me_data.name,
-    #     followers=user_followers,
-    #     following=user_following,
-    # )
+    schema_user_followers = UserSchema(many=True)
+    user_followers = schema_user_followers.dump(followers)
 
-    user_me = {
-        "api_key": api_key,
-        "id": "me_data.id",
-        "name": "me_data.name",
-        "followers": "user_followers",
-        "following": "user_following",
+    user_info = {
+        "result": True,
+        "user": {
+            "id": me_data.id,
+            "name": me_data.name,
+        },
+        "followers": user_followers,
+        "following": user_following,
     }
 
-    return make_response(user_me, 200)
+    return make_response(user_info, 200)
 
 
 @router.route("/all")

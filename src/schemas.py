@@ -26,7 +26,6 @@ from models import User
 #
 class UserSchema(ma.SQLAlchemySchema):
     class Meta:
-        # model = User
         fields = ("id", "name")
 
 #

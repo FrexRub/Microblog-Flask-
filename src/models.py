@@ -45,6 +45,9 @@ class User(db.Model):
         lazy="dynamic",
     )
 
+    def __repr__(self):
+        return f"{self.id} {self.name}"
+
 
 class Tweet(db.Model):
     __tablename__ = "tweets"
@@ -76,6 +79,9 @@ class Tweet(db.Model):
             .where(LikesTweet.tweet_id == cls.id)
             .label("like_count")
         )
+
+    def __repr__(self):
+        return f"{self.id} {self.tweet_data}"
 
 
 class TweetMedia(db.Model):
