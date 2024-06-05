@@ -1,3 +1,5 @@
+from typing import List
+
 from app import ma
 from models import User
 
@@ -28,11 +30,11 @@ class UserSchema(ma.SQLAlchemySchema):
     class Meta:
         fields = ("id", "name")
 
-#
-#
-# class UserAll(User):
-#     followers: List[User] = Field(title="User Followers")
-#     following: List[User] = Field(title="User Following")
+
+class UserAllSchema(UserSchema):
+    followers: List[User]
+    following: List[User]
+    result: bool
 #
 #
 # class UserOut(ResultClass):

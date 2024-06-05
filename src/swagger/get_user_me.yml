@@ -1,27 +1,57 @@
 tags:
-  - Users
-summary: Get USer Me
+  - users
+summary: Get User Me
+description: Get User Me
+operationId: get_user_me_api_users_me_get
 parameters:
   - name: api-key
     in: header
     required: false
-    schem:
+    schema:
       type: string
       title: Api-Key
 definitions:
-  Palette:
-    type: object
-    properties:
-      palette_name:
-        type: array
-        items:
-          $ref: '#/definitions/Color'
-  Color:
-    type: string
+  UserAll:
+      properties:
+        id:
+          type: integer
+          title: ID User
+        name:
+          type: string
+          title: Name User
+        followers:
+          items:
+            $ref: '#/components/schemas/User'
+          type: array
+          title: User Followers
+        following:
+          items:
+            $ref: '#/components/schemas/User'
+          type: array
+          title: User Following
+      type: object
+      required:
+        - id
+        - name
+        - followers
+        - following
+      title: UserAll
+
+  User:
+      properties:
+        id:
+          type: integer
+          title: ID User
+        name:
+          type: string
+          title: Name User
+      type: object
+      required:
+        - id
+        - name
+      title: User
 responses:
   200:
     description: A list of colors (may be filtered by palette)
     schema:
-      $ref: '#/definitions/Palette'
-    examples:
-      rgb: ['red', 'green', 'blue']
+      $ref: '#/definitions/UserAll'

@@ -30,7 +30,7 @@ app.register_error_handler(418, handle_exception_418)
 
 
 @app.route('/colors/<palette>/')
-@swag_from('swagger/users.yml', validation=False)
+# @swag_from('swagger/users.yml', validation=False)
 def colors(palette):
     all_colors = {
         'cmyk': ['cyan', 'magenta', 'yellow', 'black'],
