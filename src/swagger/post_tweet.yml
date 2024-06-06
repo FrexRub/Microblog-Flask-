@@ -1,8 +1,8 @@
 tags:
-  - medias
-summary: Media for tweet
-description: Media for tweet
-operationId: add media for tweet
+  - tweets
+summary: Post Api Tweets
+description: Post Api Tweets
+operationId: add tweet
 parameters:
   - name: api-key
     in: header
@@ -15,7 +15,7 @@ requestBody:
   content:
     multipart/form-data:
       schema:
-        $ref: '#/definitions/Body_post_medias'
+        $ref: '#/definitions/TweetOut'
 definitions:
     Body_post_medias:
       properties:
@@ -28,19 +28,35 @@ definitions:
         - file
       title: Body_post_medias
 
-    MediaOut:
+    TweetIn:
+      properties:
+        tweet_data:
+          type: string
+          title: Text Tweet
+        tweet_media_ids:
+          items:
+            type: integer
+          type: array
+          title: ID medias of Tweet
+      type: object
+      required:
+        - tweet_data
+        - tweet_media_ids
+      title: TweetIn
+
+    TweetOut:
       properties:
         rusult:
           type: boolean
           title: Response status
-        media_id:
+        tweet_id:
           type: integer
-          title: Media ID
+          title: Tweet ID
       type: object
       required:
         - rusult
-        - media_id
-      title: MediaOut
+        - tweet_id
+      title: TweetOut
 
     ValidationError:
       properties:
@@ -58,7 +74,7 @@ responses:
   201:
     description:
     schema:
-      $ref: '#/definitions/MediaOut'
+      $ref: '#/definitions/TweetIn'
   418:
     description:
     schema:

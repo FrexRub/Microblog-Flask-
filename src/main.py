@@ -7,10 +7,12 @@ from app import app
 from config import BASE_DIR
 from view_users import user_bp
 from view_medias import medias_bp
+from view_tweets import tweets_bp
 from exceptions import UnicornException
 
 app.register_blueprint(user_bp, url_prefix="/api/users")
 app.register_blueprint(medias_bp, url_prefix="/api/medias")
+app.register_blueprint(tweets_bp, url_prefix="/api/tweets")
 swagger = Swagger(app)
 
 default_exceptions[418] = UnicornException

@@ -1,5 +1,6 @@
 from typing import Tuple, List, Optional, Literal
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
+from sqlalchemy.orm.exc import StaleDataError
 
 from schemas import UserSchema
 from models import User, TweetMedia
@@ -90,7 +91,7 @@ def user_following(id_follower: int, apy_key_user: str, metod: Literal["followin
         try:
             data_user.following.append(user_folower)
             db.session.commit()
-        except db.exc.IntegrityError:
+        except IntegrityError:
             db.session.rollback()
             return False
         else:
@@ -99,7 +100,7 @@ def user_following(id_follower: int, apy_key_user: str, metod: Literal["followin
     if metod == "unfollowing":
         try:
             data_user.following.remove(user_folower)
-        except db.exc.SQLAlchemyError:
+        except StaleDataError:
             db.session.rollback()
             return False
         else:
@@ -117,7 +118,7 @@ def add_file_media(apy_key_user: str, name_file: str):
     :return: Option[int]
         ID новой записи (при успешном добавлении в БД)
     """
-    new_media: TweetMedia = TweetMedia(name_file=name_file)
+
     data_user: Optional[User] = get_user_by_apy_key(apy_key_user)
 
     if data_user is None:
@@ -127,9 +128,11 @@ def add_file_media(apy_key_user: str, name_file: str):
             error_message=f"Пользователь с ключом {apy_key_user} не найден",
         )
 
+    new_media: TweetMedia = TweetMedia(name_file=name_file)
+
     try:
         db.session.add(new_media)
-    except db.exc.SQLAlchemyError:
+    except SQLAlchemyError:
         db.session.rollback()
         raise UnicornException(
             result=False,

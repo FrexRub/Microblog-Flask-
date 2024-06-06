@@ -53,9 +53,9 @@ def post_user_follow(id: int):
     :return: schemas.ResultClass
         статус ответа
     """
-    print("start")
+
     api_key: str = request.headers.get("api-key", "test")
-    print("api-key", api_key)
+
     if request.method == "POST":
         result: bool = user_following(id_follower=id, apy_key_user=api_key, metod="following")
 

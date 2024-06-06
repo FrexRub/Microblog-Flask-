@@ -17,7 +17,7 @@ PATH_MEDIA: str = os.path.join(PATH_PROJECT, "media")
 
 @medias_bp.route("/", methods=["POST"])
 @swag_from('swagger/post_media.yml')
-async def post_medias():
+def post_medias():
     """
     Обработка запроса на загрузку файлов из твита
     :return: schemas.MediaOut
@@ -30,9 +30,12 @@ async def post_medias():
             error_type="Ключ не задан",
             error_message="Ключ пользователя не задан",
         )
+    print("api_key", api_key)
 
     file = request.files["file"]
     file_name: str = str(datetime.datetime.now()) + "_" + secure_filename(file.filename)
+
+    print("file_name", file_name)
 
     if "test_file.jpg" in file.filename:
         file_path: str = "out_test.jpg"
@@ -42,6 +45,7 @@ async def post_medias():
     try:
         # with open(file_path, "wb") as f:
         #     f.write(file.file.read())
+        print("file_path", file_path)
         file.save(file_path)
     except Exception as exc:
         raise UnicornException(
