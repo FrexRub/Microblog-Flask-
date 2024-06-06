@@ -4,18 +4,19 @@ summary: User Follow
 description: User Follow
 operationId: user following
 parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: integer
+      exclusiveMinimum: 0
+      title: Id
   - name: api-key
     in: header
-    required: false
+    required: true
     schema:
       type: string
       title: Api-Key
-  - id: id
-    in: path
-    required: false
-    schema:
-      type: integer
-      title: ID user
 definitions:
     ResultClass:
       properties:
@@ -26,6 +27,7 @@ definitions:
       required:
         - rusult
       title: ResultClass
+
     ValidationError:
       properties:
         error_message:
