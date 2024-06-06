@@ -13,7 +13,7 @@ from exceptions import UnicornException
 app.register_blueprint(user_bp, url_prefix="/api/users")
 app.register_blueprint(medias_bp, url_prefix="/api/medias")
 app.register_blueprint(tweets_bp, url_prefix="/api/tweets")
-swagger = Swagger(app)
+swagger = Swagger(app, template_file='openapi.json')
 
 default_exceptions[418] = UnicornException
 

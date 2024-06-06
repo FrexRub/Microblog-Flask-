@@ -1,7 +1,6 @@
 import os
 import datetime
 from flask import Blueprint, make_response, request, jsonify
-from flasgger import swag_from
 from typing import List
 from werkzeug.utils import secure_filename
 
@@ -16,7 +15,6 @@ PATH_MEDIA: str = os.path.join(PATH_PROJECT, "media")
 
 
 @medias_bp.route("/", methods=["POST"])
-@swag_from('swagger/post_media.yml')
 def post_medias():
     """
     Обработка запроса на загрузку файлов из твита

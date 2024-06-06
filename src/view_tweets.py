@@ -10,7 +10,6 @@ tweets_bp = Blueprint('tweets_bp', __name__)
 
 
 @tweets_bp.route("/", methods=["POST"])
-@swag_from('swagger/post_tweet.yml')
 # @router.post("/", status_code=201, response_model=schemas.TweetOut)
 def post_api_tweets():
     """
@@ -27,9 +26,11 @@ def post_api_tweets():
             error_message="Ключ пользователя не задан",
         )
 
+    res = request.get_json()
     tweet_schema = TweetIn()
-    tweet =tweet_schema.dump(request.get_json())
+    tweet =tweet_schema.dump(res)
 
+    print(res, res['tweet_data'])
     print(tweet)
     # res = create_tweet(
     #     apy_key_user=api_key,
@@ -44,3 +45,4 @@ def post_api_tweets():
     #         error_message=err[1].strip(),
     #     )
     # return schemas.TweetOut(rusult=True, tweet_id=res)
+    return make_response(jsonify("new tweet"), 200)

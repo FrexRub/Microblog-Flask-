@@ -1,6 +1,5 @@
 from flask import Blueprint, make_response, request, jsonify
-from flasgger import swag_from
-from typing import List, Optional
+from typing import List
 
 from models import User
 from schemas import UserSchema
@@ -10,7 +9,6 @@ user_bp = Blueprint('user_bp', __name__)
 
 
 @user_bp.route("/me", methods=["GET"])
-@swag_from('swagger/get_user_me.yml', validation=False)
 def get_user_me():
     """
     Пользователь может получить информацию о своём профиле
@@ -42,7 +40,6 @@ def get_user_me():
 
 
 @user_bp.route("/<int:id>/follow", methods=["POST", "DELETE"])
-@swag_from('swagger/post_user_follow.yml')
 def post_user_follow(id: int):
     """
     Обработка запроса на добавление в друзья выбранного пользователя
@@ -72,7 +69,6 @@ def post_user_follow(id: int):
 
 
 @user_bp.route("/<int:id>", methods=["GET"])
-@swag_from('swagger/get_user_id.yml')
 def get_user_id_(id: int):
     """
     Обработка запроса на получение информацию о профиле пользователя по ID

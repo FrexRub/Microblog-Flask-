@@ -16,9 +16,10 @@ class MyServer(Flask):
         self.config['SQLALCHEMY_DATABASE_URI'] = db_url
         self.config['SWAGGER'] = {
             'title': 'API Microlog',
-            'uiversion': 3,
+            'openapi': '3.0.2',
             'specs_route': "/api/docs/"
         }
+
 
 
 app = MyServer(__name__)
