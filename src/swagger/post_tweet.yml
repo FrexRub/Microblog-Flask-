@@ -10,24 +10,19 @@ parameters:
     schema:
       type: string
       title: Api-Key
-requestBody:
-  required: true
-  content:
-    multipart/form-data:
-      schema:
-        $ref: '#/definitions/TweetOut'
+  - name: tweet
+    in: "body"
+    required: true
+    schema:
+      $ref: '#/definitions/TweetIn'
+      title: text tweet
+#requestBody:
+#  required: true
+#  content:
+#    application/json:
+#      schema:
+#        $ref: '#/definitions/TweetIn'
 definitions:
-    Body_post_medias:
-      properties:
-        file:
-          type: string
-          format: binary
-          title: File
-      type: object
-      required:
-        - file
-      title: Body_post_medias
-
     TweetIn:
       properties:
         tweet_data:
