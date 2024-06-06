@@ -1,31 +1,47 @@
 tags:
-  - users
+  - medias
 summary: User Follow
 description: User Follow
 operationId: user following
 parameters:
   - name: api-key
     in: header
-    required: false
+    required: true
     schema:
       type: string
       title: Api-Key
-  - id: id
-    in: path
-    required: false
-    schema:
-      type: integer
-      title: ID user
+requestBody:
+  required: true
+  content:
+    multipart/form-data:
+      schema:
+        $ref: '#/definitions/Body_post_medias'
 definitions:
-    ResultClass:
+    Body_post_medias:
+      properties:
+        file:
+          type: string
+          format: binary
+          title: File
+      type: object
+      required:
+        - file
+      title: Body_post_medias
+
+    MediaOut:
       properties:
         rusult:
           type: boolean
           title: Response status
+        media_id:
+          type: integer
+          title: Media ID
       type: object
       required:
         - rusult
-      title: ResultClass
+        - media_id
+      title: MediaOut
+
     ValidationError:
       properties:
         error_message:
@@ -42,12 +58,8 @@ responses:
   201:
     description:
     schema:
-      $ref: '#/definitions/ResultClass'
+      $ref: '#/definitions/MediaOut'
   418:
     description:
     schema:
       $ref: '#/definitions/ValidationError'
-  400:
-    description:
-    schema:
-      $ref: '#/definitions/ResultClass'

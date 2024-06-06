@@ -22,10 +22,11 @@ from models import User
 #     tweet_id: int = Field(..., title="Tweet ID")
 #
 #
-# class MediaOut(ResultClass):
-#     media_id: int = Field(..., title="Media ID")
-#
-#
+class MediaOutSchema(ma.Schema):
+    rusult: bool
+    media_id: int
+
+
 class UserSchema(ma.SQLAlchemySchema):
     class Meta:
         fields = ("id", "name")

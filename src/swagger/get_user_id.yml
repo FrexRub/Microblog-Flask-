@@ -8,7 +8,7 @@ parameters:
     in: path
     required: false
     schema:
-      type: string
+      type: integer
       title: ID user
 definitions:
   UserAll:
