@@ -15,9 +15,7 @@ followers = db.Table(
 
 class LikesTweet(db.Model):
     __tablename__ = "likes_tweet"
-    __table_args__ = (
-        db.UniqueConstraint("user_id", "tweet_id", name="idx_unique_user_tweet"),
-    )
+    __table_args__ = (db.UniqueConstraint("user_id", "tweet_id"), )
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), primary_key=True)
     tweet_id = db.Column(db.Integer, db.ForeignKey("tweets.id"), primary_key=True)
 
@@ -46,7 +44,7 @@ class User(db.Model):
     )
 
     def __repr__(self):
-        return f"{self.id} {self.name}"
+        return f"User {self.id} {self.name}"
 
 
 class Tweet(db.Model):
@@ -81,7 +79,7 @@ class Tweet(db.Model):
         )
 
     def __repr__(self):
-        return f"{self.id} {self.tweet_data}"
+        return f"Tweet {self.id} {self.tweet_data}"
 
 
 class TweetMedia(db.Model):

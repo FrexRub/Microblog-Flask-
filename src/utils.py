@@ -1,5 +1,8 @@
 import os
+from psycopg2 import errors
 from typing import Tuple, List, Optional, Literal
+
+import sqlalchemy.exc
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm.exc import StaleDataError
 
@@ -258,3 +261,46 @@ def delete_tweets(apy_key_user: str, id_tweet: int) -> bool:
             return True
     else:
         return False
+
+
+def add_like_tweet(apy_key_user: str, id_tweet: int) -> bool:
+    """
+    Добавляет лайк твиттеру с указанным ID
+    :param apy_key_user: str
+        ключ пользователя
+    :param id_tweet: int
+        ID твиттера
+    :return: bool
+        статус выполнения операции
+    """
+    # query = db.session.execute(
+    #     db.select(User)
+    #     .where(User.apy_key_user == apy_key_user)
+    #     .options(db.selectinload(User.like_tweet))
+    # )
+    # data_user: Optional[User] = query.scalars().first()
+
+    data_user: Optional[User] = get_user_by_apy_key(apy_key_user)
+
+    if data_user is None:
+        raise UnicornException(
+            result=False,
+            error_type="Пользователь не найден",
+            error_message=f"Пользователь с ключом {apy_key_user} не найден",
+        )
+
+    tweet: Tweet = db.session.get(Tweet, id_tweet)
+
+    # Проверка автора твита
+    if tweet.user_id == data_user.id:
+        return False
+
+    try:
+        data_user.like_tweet.append(tweet)
+    except errors.UniqueViolation:
+    # except IntegrityError:
+        db.session.rollback()
+        return False
+    else:
+        db.session.commit()
+        return True
