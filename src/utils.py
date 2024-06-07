@@ -1,3 +1,4 @@
+import os
 from typing import Tuple, List, Optional, Literal
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm.exc import StaleDataError
@@ -182,3 +183,78 @@ def create_tweet(apy_key_user: str, tweet_data: str, tweet_media_ids: Optional[L
             error_message=f"{exc}",
         )
     return new_tweet.id
+
+
+def name_file_from_tweet_medias(list_id_name_file: List[int]) -> List[str]:
+    """
+    Возвращает список имен файлов по их ID из таблицы TweetMedia
+    :param session: AsyncSession
+        текущая сессия
+    :param list_id_name_file: List[int]
+        список ID имен файлов
+    :return: List[str]
+        список имен файлов, или пустой
+    """
+    list_name_file: List[str] = list()
+    for i_id in list_id_name_file:
+        res: Optional[TweetMedia] = db.session.get(TweetMedia, i_id)
+        if res:
+            list_name_file.append(res.name_file)
+    return list_name_file
+
+
+def delete_files_from_tweet(id_files_tweet: List[int]) -> None:
+    name_files: List[str] = name_file_from_tweet_medias(id_files_tweet)
+    for i_file in name_files:
+        name_file: str = os.path.join("media", i_file)
+        os.remove(name_file)
+
+
+def delete_tweets(apy_key_user: str, id_tweet: int) -> bool:
+    """
+    Удаление твиттера пользователя по ID
+    :param apy_key_user: str
+        ключ пользователя
+    :param id_tweet: int
+        ID твиттера
+    :return: bool
+        статус выполнения операции
+    """
+    data_user: Optional[User] = get_user_by_apy_key(apy_key_user)
+
+    if data_user is None:
+        raise UnicornException(
+            result=False,
+            error_type="Пользователь не найден",
+            error_message=f"Пользователь с ключом {apy_key_user} не найден",
+        )
+
+    # Проверяем принадлежность твитера пользователю
+    query = db.session.execute(
+        db.select(Tweet).filter(
+            db.and_(
+                Tweet.user_id == data_user.id,
+                Tweet.id == id_tweet,
+            )
+        )
+    )
+    tweet: Optional[Tweet] = query.scalars().one_or_none()
+    if tweet:
+        tweet_media_ids: List[int] = tweet.tweet_media_ids
+        try:
+            db.session.delete(tweet)
+        except SQLAlchemyError:
+            db.session.rollback()
+            return False
+        else:
+            db.session.commit()
+            if len(tweet_media_ids) != 0:
+                delete_files_from_tweet(tweet_media_ids)
+                stmt = db.delete(TweetMedia).filter(
+                    TweetMedia.media_id.in_(tweet_media_ids)
+                )
+                db.session.execute(stmt)
+                db.session.commit()
+            return True
+    else:
+        return False
