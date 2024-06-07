@@ -1,8 +1,8 @@
 tags:
   - medias
-summary: Media for tweet
-description: Media for tweet
-operationId: add media for tweet
+summary: User Follow
+description: User Follow
+operationId: user following
 parameters:
   - name: api-key
     in: header

@@ -4,13 +4,13 @@ from app import ma
 from models import User
 
 
-class ResultClass(ma.Schema):
-    rusult: bool
+# class ResultClass(ma.Schema):
+#     rusult: bool
 
 
-class TweetIn(ma.Schema):
-    tweet_data: str
-    tweet_media_ids: List[int]
+# class TweetIn(ma.Schema):
+#     tweet_data: str
+#     tweet_media_ids: List[int]
 
 
 #

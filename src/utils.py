@@ -3,7 +3,7 @@ from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm.exc import StaleDataError
 
 from schemas import UserSchema
-from models import User, TweetMedia
+from models import User, TweetMedia, Tweet
 from app import db
 from exceptions import UnicornException
 
@@ -142,3 +142,43 @@ def add_file_media(apy_key_user: str, name_file: str):
     else:
         db.session.commit()
     return new_media.media_id
+
+
+def create_tweet(apy_key_user: str, tweet_data: str, tweet_media_ids: Optional[List[int]]) -> int:
+    """
+    Добавляет новый твиттер в БД
+    :param apy_key_user: str
+        ключ пользователя
+    :param tweet_data: str
+        текстовое содержание твиттера
+    :param tweet_media_ids: Optional[List[int]]
+        список ID прикрепленных к твиттеру изображений (при наличии)
+    :return: Union[str, int]
+        ID созданного твиттера (при успешном добавлении в БД)
+    """
+    data_user: Optional[User] = get_user_by_apy_key(apy_key_user)
+
+    if data_user is None:
+        raise UnicornException(
+            result=False,
+            error_type="Пользователь не найден",
+            error_message=f"Пользователь с ключом {apy_key_user} не найден",
+        )
+
+    new_tweet: Tweet = Tweet(
+        tweet_data=tweet_data,
+        tweet_media_ids=tweet_media_ids,
+        user_id=data_user.id,
+    )
+
+    try:
+        db.session.add(new_tweet)
+        db.session.commit()
+    except IntegrityError as exc:
+        db.session.rollback()
+        raise UnicornException(
+            result=False,
+            error_type="Ошибка БД",
+            error_message=f"{exc}",
+        )
+    return new_tweet.id
