@@ -3,11 +3,13 @@ from flasgger import swag_from
 from typing import List
 
 from exceptions import UnicornException
+from schemas import TweetSchema
 from utils import (
     create_tweet,
     delete_tweets,
     add_like_tweet,
-    delete_like_tweet
+    delete_like_tweet,
+    out_tweets_user,
 )
 
 tweets_bp = Blueprint('tweets_bp', __name__)
@@ -43,18 +45,12 @@ def api_tweets():
         return make_response(jsonify(tweet_info), 201)
 
     if request.method == "GET":
-        pass
-        # res: Union[str, List[schemas.Tweet]] = await out_tweets_user(
-        #     session=session, apy_key_user=api_key
-        # )
-        # if isinstance(res, str):
-        #     err: List[str] = res.split("&")
-        #     raise UnicornException(
-        #         result=False,
-        #         error_type=err[0].strip(),
-        #         error_message=err[1].strip(),
-        #     )
-        # return schemas.Tweets(rusult=True, tweets=res)
+        res: List[TweetSchema] = out_tweets_user(apy_key_user=api_key)
+        tweet_info = {
+            "result": True,
+            "tweet_id": res
+        }
+        return make_response(jsonify(tweet_info), 201)
 
 
 @tweets_bp.route("/<int:id>", methods=["DELETE"])

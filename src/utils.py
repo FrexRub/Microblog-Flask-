@@ -378,20 +378,21 @@ def out_tweets_user(apy_key_user: str) -> List[Tweet]:
     query = db.session.execute(stmt)
     res = query.scalars().all()
 
-    me_tweets: List[Tweet] = list()
+    me_tweets: List[TweetSchema] = list()
     for i_res in res:  # type: Tweet
         id_tweet: int = i_res.id
         content_tweet: str = i_res.tweet_data
 
+        print("id_tweet", id_tweet, "content_tweet", content_tweet)
+
         schema_author = UserSchema()
         author_tweet: User = schema_author.dump(i_res.user)
-        #
-        # author_tweet: User = schemas.User(
-        #     id=i_res.user.id, name=i_res.user.name
-        # )
+        print("author_tweet", author_tweet)
 
         schema_like = LikeSchema(many=True)
         likes_tweet: List[LikeSchema] = schema_like.dump(i_res.like_user)
+        print("schema_like", likes_tweet)
+
         # likes_tweet: List[schemas.Like] = [
         #     schemas.Like(user_id=i_like.id, name=i_like.name)
         #     for i_like in i_res.like_user
@@ -401,7 +402,7 @@ def out_tweets_user(apy_key_user: str) -> List[Tweet]:
 
         schema_tweet = TweetSchema()
 
-        tweet = schema_tweet(
+        tweet = TweetSchema(
             id=id_tweet,
             content=content_tweet,
             attachments=attachments_tweet,
@@ -409,14 +410,17 @@ def out_tweets_user(apy_key_user: str) -> List[Tweet]:
             likes=likes_tweet,
         )
 
-        # tweet: schemas.Tweet = schemas.Tweet(
-        #     id=id_tweet,
-        #     content=content_tweet,
-        #     attachments=attachments_tweet,
-        #     author=author_tweet,
-        #     likes=likes_tweet,
-        # )
+        print("tweet", tweet)
+    #
+    #     # tweet: schemas.Tweet = schemas.Tweet(
+    #     #     id=id_tweet,
+    #     #     content=content_tweet,
+    #     #     attachments=attachments_tweet,
+    #     #     author=author_tweet,
+    #     #     likes=likes_tweet,
+    #     # )
+    #
+    #     me_tweets.append(tweet)
 
-        me_tweets.append(tweet)
-
-    return me_tweets
+    # return me_tweets
+    return list()
