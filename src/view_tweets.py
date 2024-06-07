@@ -13,10 +13,10 @@ from utils import (
 tweets_bp = Blueprint('tweets_bp', __name__)
 
 
-@tweets_bp.route("/", methods=["POST"])
-def post_api_tweets():
+@tweets_bp.route("/", methods=["POST", "GET"])
+def api_tweets():
     """
-    Добавление твита от имени текущего пользователя
+    Добавление твита/получение ленты твитов от имени текущего пользователя
     :return: Dict[str, Union[bool, int]]
         статус ответа и ID добавленного твита
     """
@@ -29,21 +29,32 @@ def post_api_tweets():
             error_message="Ключ пользователя не задан",
         )
 
-    tweet = request.get_json()
+    if request.method == "POST":
+        tweet = request.get_json()
+        res: int = create_tweet(
+            apy_key_user=api_key,
+            tweet_data=tweet["tweet_data"],
+            tweet_media_ids=tweet["tweet_media_ids"],
+        )
+        tweet_info = {
+            "result": True,
+            "tweet_id": res
+        }
+        return make_response(jsonify(tweet_info), 201)
 
-    print(tweet)
-    res: int = create_tweet(
-        apy_key_user=api_key,
-        tweet_data=tweet["tweet_data"],
-        tweet_media_ids=tweet["tweet_media_ids"],
-    )
-
-    tweet_info = {
-        "result": True,
-        "tweet_id": res
-    }
-
-    return make_response(jsonify(tweet_info), 201)
+    if request.method == "GET":
+        pass
+        # res: Union[str, List[schemas.Tweet]] = await out_tweets_user(
+        #     session=session, apy_key_user=api_key
+        # )
+        # if isinstance(res, str):
+        #     err: List[str] = res.split("&")
+        #     raise UnicornException(
+        #         result=False,
+        #         error_type=err[0].strip(),
+        #         error_message=err[1].strip(),
+        #     )
+        # return schemas.Tweets(rusult=True, tweets=res)
 
 
 @tweets_bp.route("/<int:id>", methods=["DELETE"])

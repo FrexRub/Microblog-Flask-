@@ -7,6 +7,7 @@ from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm.exc import StaleDataError
 
 from app import db
+from schemas import UserSchema, LikeSchema, TweetSchema
 from exceptions import UnicornException
 from models import User, TweetMedia, Tweet, LikesTweet
 
@@ -103,11 +104,11 @@ def user_following(id_follower: int, apy_key_user: str, metod: Literal["followin
     if metod == "unfollowing":
         try:
             data_user.following.remove(user_folower)
+            db.session.commit()
         except StaleDataError:
             db.session.rollback()
             return False
         else:
-            db.session.commit()
             return True
 
 
@@ -135,6 +136,7 @@ def add_file_media(apy_key_user: str, name_file: str):
 
     try:
         db.session.add(new_media)
+        db.session.commit()
     except SQLAlchemyError:
         db.session.rollback()
         raise UnicornException(
@@ -142,8 +144,7 @@ def add_file_media(apy_key_user: str, name_file: str):
             error_type="File not append",
             error_message="ошибка записи в БД",
         )
-    else:
-        db.session.commit()
+
     return new_media.media_id
 
 
@@ -174,6 +175,7 @@ def create_tweet(apy_key_user: str, tweet_data: str, tweet_media_ids: Optional[L
         user_id=data_user.id,
     )
 
+    print("new_tweet", new_tweet)
     try:
         db.session.add(new_tweet)
         db.session.commit()
@@ -184,6 +186,7 @@ def create_tweet(apy_key_user: str, tweet_data: str, tweet_media_ids: Optional[L
             error_type="Ошибка БД",
             error_message=f"{exc}",
         )
+    print("add_new_tweet", new_tweet)
     return new_tweet.id
 
 
@@ -245,11 +248,11 @@ def delete_tweets(apy_key_user: str, id_tweet: int) -> bool:
         tweet_media_ids: List[int] = tweet.tweet_media_ids
         try:
             db.session.delete(tweet)
+            db.session.commit()
         except SQLAlchemyError:
             db.session.rollback()
             return False
         else:
-            db.session.commit()
             if len(tweet_media_ids) != 0:
                 delete_files_from_tweet(tweet_media_ids)
                 stmt = db.delete(TweetMedia).filter(
@@ -337,11 +340,83 @@ def delete_like_tweet(apy_key_user: str, id_tweet: int) -> bool:
     if like_tweet:
         try:
             db.session.delete(like_tweet)
+            db.session.commit()
         except SQLAlchemyError:
             db.session.rollback()
             return False
         else:
-            db.session.commit()
             return True
     else:
         return False
+
+
+def out_tweets_user(apy_key_user: str) -> List[Tweet]:
+    """
+    Возвращает твиты в ленту пользователя
+    :param apy_key_user: str
+        ключ пользователя
+    :return: List[Tweet]
+        список твиттов пользователя
+    """
+    data_user: Optional[User] = get_user_by_apy_key(apy_key_user)
+
+    if data_user is None:
+        raise UnicornException(
+            result=False,
+            error_type="Пользователь не найден",
+            error_message=f"Пользователь с ключом {apy_key_user} не найден",
+        )
+
+    stmt = (
+        db.select(Tweet)
+        .options(
+            db.joinedload(Tweet.user),
+            db.selectinload(Tweet.like_user),
+        )
+        .order_by(db.desc(Tweet.like_count))
+    )
+    query = db.session.execute(stmt)
+    res = query.scalars().all()
+
+    me_tweets: List[Tweet] = list()
+    for i_res in res:  # type: Tweet
+        id_tweet: int = i_res.id
+        content_tweet: str = i_res.tweet_data
+
+        schema_author = UserSchema()
+        author_tweet: User = schema_author.dump(i_res.user)
+        #
+        # author_tweet: User = schemas.User(
+        #     id=i_res.user.id, name=i_res.user.name
+        # )
+
+        schema_like = LikeSchema(many=True)
+        likes_tweet: List[LikeSchema] = schema_like.dump(i_res.like_user)
+        # likes_tweet: List[schemas.Like] = [
+        #     schemas.Like(user_id=i_like.id, name=i_like.name)
+        #     for i_like in i_res.like_user
+        # ]
+
+        attachments_tweet: List[str] = name_file_from_tweet_medias(i_res.tweet_media_ids)
+
+        schema_tweet = TweetSchema()
+
+        tweet = schema_tweet(
+            id=id_tweet,
+            content=content_tweet,
+            attachments=attachments_tweet,
+            author=author_tweet,
+            likes=likes_tweet,
+        )
+
+        # tweet: schemas.Tweet = schemas.Tweet(
+        #     id=id_tweet,
+        #     content=content_tweet,
+        #     attachments=attachments_tweet,
+        #     author=author_tweet,
+        #     likes=likes_tweet,
+        # )
+
+        me_tweets.append(tweet)
+
+    return me_tweets
