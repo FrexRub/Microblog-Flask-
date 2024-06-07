@@ -6,10 +6,9 @@ import sqlalchemy.exc
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm.exc import StaleDataError
 
-from schemas import UserSchema
-from models import User, TweetMedia, Tweet
 from app import db
 from exceptions import UnicornException
+from models import User, TweetMedia, Tweet, LikesTweet
 
 
 def get_user_by_apy_key(apy_key_user: str) -> Optional[User]:
@@ -273,13 +272,6 @@ def add_like_tweet(apy_key_user: str, id_tweet: int) -> bool:
     :return: bool
         статус выполнения операции
     """
-    # query = db.session.execute(
-    #     db.select(User)
-    #     .where(User.apy_key_user == apy_key_user)
-    #     .options(db.selectinload(User.like_tweet))
-    # )
-    # data_user: Optional[User] = query.scalars().first()
-
     data_user: Optional[User] = get_user_by_apy_key(apy_key_user)
 
     if data_user is None:
@@ -295,12 +287,61 @@ def add_like_tweet(apy_key_user: str, id_tweet: int) -> bool:
     if tweet.user_id == data_user.id:
         return False
 
-    try:
+    query = db.session.execute(
+        db.select(LikesTweet).filter(
+            db.and_(
+                LikesTweet.user_id == data_user.id,
+                LikesTweet.tweet_id == id_tweet,
+            )
+        )
+    )
+    like_tweet: Optional[LikesTweet] = query.scalars().one_or_none()
+
+    if like_tweet is None:
         data_user.like_tweet.append(tweet)
-    except errors.UniqueViolation:
-    # except IntegrityError:
-        db.session.rollback()
-        return False
-    else:
         db.session.commit()
         return True
+    else:
+        return False
+
+
+def delete_like_tweet(apy_key_user: str, id_tweet: int) -> bool:
+    """
+    Удаляет лайк у твиттера с указанным ID
+    :param apy_key_user: str
+        ключ пользователя
+    :param id_tweet: int
+        ID твиттера
+    :return: bool
+        статус выполнения операции
+    """
+    data_user: Optional[User] = get_user_by_apy_key(apy_key_user)
+
+    if data_user is None:
+        raise UnicornException(
+            result=False,
+            error_type="Пользователь не найден",
+            error_message=f"Пользователь с ключом {apy_key_user} не найден",
+        )
+
+    query = db.session.execute(
+        db.select(LikesTweet).filter(
+            db.and_(
+                LikesTweet.user_id == data_user.id,
+                LikesTweet.tweet_id == id_tweet,
+            )
+        )
+    )
+    like_tweet: Optional[LikesTweet] = query.scalars().one_or_none()
+
+    if like_tweet:
+        try:
+            db.session.delete(like_tweet)
+        except SQLAlchemyError:
+            db.session.rollback()
+            return False
+        else:
+            db.session.commit()
+            return True
+    else:
+        return False

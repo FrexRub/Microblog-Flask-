@@ -3,7 +3,12 @@ from flasgger import swag_from
 from typing import List
 
 from exceptions import UnicornException
-from utils import add_file_media, create_tweet, delete_tweets, add_like_tweet
+from utils import (
+    create_tweet,
+    delete_tweets,
+    add_like_tweet,
+    delete_like_tweet
+)
 
 tweets_bp = Blueprint('tweets_bp', __name__)
 
@@ -93,6 +98,13 @@ def tweet_likes(id: int):
 
     if request.method == "POST":
         res: bool = add_like_tweet(apy_key_user=api_key, id_tweet=id)
+        if res:
+            status_code = 200
+        else:
+            status_code = 400
+
+    if request.method == "DELETE":
+        res: bool = delete_like_tweet(apy_key_user=api_key, id_tweet=id)
         if res:
             status_code = 200
         else:
