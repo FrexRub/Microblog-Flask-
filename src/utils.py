@@ -350,12 +350,12 @@ def delete_like_tweet(apy_key_user: str, id_tweet: int) -> bool:
         return False
 
 
-def out_tweets_user(apy_key_user: str) -> List[Tweet]:
+def out_tweets_user(apy_key_user: str) -> List[TweetSchema]:
     """
     Возвращает твиты в ленту пользователя
     :param apy_key_user: str
         ключ пользователя
-    :return: List[Tweet]
+    :return: List[TweetSchema]
         список твиттов пользователя
     """
     data_user: Optional[User] = get_user_by_apy_key(apy_key_user)
@@ -393,34 +393,15 @@ def out_tweets_user(apy_key_user: str) -> List[Tweet]:
         likes_tweet: List[LikeSchema] = schema_like.dump(i_res.like_user)
         print("schema_like", likes_tweet)
 
-        # likes_tweet: List[schemas.Like] = [
-        #     schemas.Like(user_id=i_like.id, name=i_like.name)
-        #     for i_like in i_res.like_user
-        # ]
-
         attachments_tweet: List[str] = name_file_from_tweet_medias(i_res.tweet_media_ids)
 
-        schema_tweet = TweetSchema()
-
-        tweet = TweetSchema(
+        tweet = TweetSchema().dump(dict(
             id=id_tweet,
             content=content_tweet,
             attachments=attachments_tweet,
             author=author_tweet,
             likes=likes_tweet,
-        )
+        ))
+        me_tweets.append(tweet)
 
-        print("tweet", tweet)
-    #
-    #     # tweet: schemas.Tweet = schemas.Tweet(
-    #     #     id=id_tweet,
-    #     #     content=content_tweet,
-    #     #     attachments=attachments_tweet,
-    #     #     author=author_tweet,
-    #     #     likes=likes_tweet,
-    #     # )
-    #
-    #     me_tweets.append(tweet)
-
-    # return me_tweets
-    return list()
+    return me_tweets

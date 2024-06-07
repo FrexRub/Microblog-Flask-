@@ -63,8 +63,11 @@ def post_medias():
     #     "result": True,
     #     "media_id": res
     # }
-    media_schema = MediaOutSchema()
-    media_info = media_schema(rusult=True, media_id=res)
+
+    # media_schema = MediaOutSchema()
+    # media_info = media_schema(rusult=True, media_id=res)
+
+    media_info = MediaOutSchema().dump(dict(rusult=True, media_id=res))
 
     # return make_response(jsonify(media_info), 200)
     return make_response(jsonify("media_info"), 200)

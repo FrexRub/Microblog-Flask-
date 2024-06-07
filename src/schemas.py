@@ -1,24 +1,15 @@
-from typing import List
-
 from app import ma
-from models import User
 from marshmallow import Schema, fields
 
 
-class MediaOutSchema(ma.Schema):
-    rusult: bool
-    media_id: int
+class MediaOutSchema(Schema):
+    rusult = fields.Boolean()
+    media_id = fields.Integer()
 
 
 class UserSchema(ma.SQLAlchemySchema):
     class Meta:
         fields = ("id", "name")
-
-
-class UserAllSchema(UserSchema):
-    followers: List[User]
-    following: List[User]
-    result: bool
 
 
 class LikeSchema(ma.SQLAlchemySchema):
@@ -27,13 +18,9 @@ class LikeSchema(ma.SQLAlchemySchema):
 
 
 class TweetSchema(Schema):
-    # class Meta:
-    #     fields = ("id", "content", "attachments", "author", "likes")
-
-    id = fields.Integer()
-    content = fields.String()
-    attachments = fields.List()  : List[str]
-    author: UserSchema
-    likes: List[LikeSchema] = list()
+    id = fields.Integer(required=True)
+    content = fields.String(required=True)
+    attachments = fields.List(fields.String())
+    author = fields.Nested(UserSchema())
+    likes = fields.List(fields.Nested(LikeSchema()))
 #
-
