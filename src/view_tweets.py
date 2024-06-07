@@ -48,7 +48,7 @@ def api_tweets():
         res: List[TweetSchema] = out_tweets_user(apy_key_user=api_key)
         tweet_info = {
             "result": True,
-            "tweet_id": res
+            "tweets": res
         }
         return make_response(jsonify(tweet_info), 201)
 
