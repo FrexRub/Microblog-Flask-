@@ -1,5 +1,4 @@
 from flask import Blueprint, make_response, request, jsonify
-from flasgger import swag_from
 from typing import List
 
 from exceptions import UnicornException

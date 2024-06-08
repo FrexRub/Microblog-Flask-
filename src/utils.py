@@ -175,7 +175,6 @@ def create_tweet(apy_key_user: str, tweet_data: str, tweet_media_ids: Optional[L
         user_id=data_user.id,
     )
 
-    print("new_tweet", new_tweet)
     try:
         db.session.add(new_tweet)
         db.session.commit()
@@ -186,7 +185,6 @@ def create_tweet(apy_key_user: str, tweet_data: str, tweet_media_ids: Optional[L
             error_type="Ошибка БД",
             error_message=f"{exc}",
         )
-    print("add_new_tweet", new_tweet)
     return new_tweet.id
 
 
@@ -383,15 +381,11 @@ def out_tweets_user(apy_key_user: str) -> List[TweetSchema]:
         id_tweet: int = i_res.id
         content_tweet: str = i_res.tweet_data
 
-        print("id_tweet", id_tweet, "content_tweet", content_tweet)
-
         schema_author = UserSchema()
         author_tweet: User = schema_author.dump(i_res.user)
-        print("author_tweet", author_tweet)
 
         schema_like = LikeSchema(many=True)
         likes_tweet: List[LikeSchema] = schema_like.dump(i_res.like_user)
-        print("schema_like", likes_tweet)
 
         attachments_tweet: List[str] = name_file_from_tweet_medias(i_res.tweet_media_ids)
 
