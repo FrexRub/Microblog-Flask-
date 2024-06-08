@@ -1,6 +1,6 @@
 from sqlalchemy.ext.hybrid import hybrid_property
 
-from app import db
+from src.app import db
 
 followers = db.Table(
     "followers",
@@ -15,7 +15,7 @@ followers = db.Table(
 
 class LikesTweet(db.Model):
     __tablename__ = "likes_tweet"
-    __table_args__ = (db.UniqueConstraint("user_id", "tweet_id"), )
+    __table_args__ = (db.UniqueConstraint("user_id", "tweet_id"),)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), primary_key=True)
     tweet_id = db.Column(db.Integer, db.ForeignKey("tweets.id"), primary_key=True)
 

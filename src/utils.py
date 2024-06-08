@@ -1,15 +1,13 @@
 import os
-from psycopg2 import errors
 from typing import Tuple, List, Optional, Literal
 
-import sqlalchemy.exc
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm.exc import StaleDataError
 
-from app import db
-from schemas import UserSchema, LikeSchema, TweetSchema
-from exceptions import UnicornException
-from models import User, TweetMedia, Tweet, LikesTweet
+from src.app import db
+from src.schemas import UserSchema, LikeSchema, TweetSchema
+from src.exceptions import UnicornException
+from src.models import User, TweetMedia, Tweet, LikesTweet
 
 
 def get_user_by_apy_key(apy_key_user: str) -> Optional[User]:

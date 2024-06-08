@@ -1,9 +1,10 @@
+src.
 from flask import Blueprint, make_response, request, jsonify
 from typing import List
 
-from models import User
-from schemas import UserSchema
-from utils import get_users_my, get_user_id, user_following
+from src.models import User
+from src.schemas import UserSchema
+from src.utils import get_users_my, get_user_id, user_following
 
 user_bp = Blueprint('user_bp', __name__)
 

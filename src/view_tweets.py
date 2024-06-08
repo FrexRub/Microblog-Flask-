@@ -1,9 +1,9 @@
 from flask import Blueprint, make_response, request, jsonify
 from typing import List
 
-from exceptions import UnicornException
-from schemas import TweetSchema
-from utils import (
+from src.exceptions import UnicornException
+from src.schemas import TweetSchema
+from src.utils import (
     create_tweet,
     delete_tweets,
     add_like_tweet,

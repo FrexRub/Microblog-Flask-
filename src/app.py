@@ -2,7 +2,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 
-from database import db_url
+from src.database import db_url
 
 
 class MyServer(Flask):
@@ -19,7 +19,6 @@ class MyServer(Flask):
             'openapi': '3.0.2',
             'specs_route': "/api/docs/"
         }
-
 
 
 app = MyServer(__name__)

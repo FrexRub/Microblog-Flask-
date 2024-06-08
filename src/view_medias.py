@@ -4,9 +4,9 @@ from flask import Blueprint, make_response, request, jsonify
 from typing import List
 from werkzeug.utils import secure_filename
 
-from exceptions import UnicornException
-from utils import add_file_media
-from schemas import MediaOutSchema
+from src.exceptions import UnicornException
+from src.utils import add_file_media
+from src.schemas import MediaOutSchema
 
 medias_bp = Blueprint('medias_bp', __name__)
 

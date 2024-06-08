@@ -1,14 +1,12 @@
-from flask import json, jsonify, make_response
+from flask import json
 from flasgger import Swagger
-from flasgger import swag_from
 from werkzeug.exceptions import default_exceptions
 
-from app import app
-from config import BASE_DIR
-from view_users import user_bp
-from view_medias import medias_bp
-from view_tweets import tweets_bp
-from exceptions import UnicornException
+from src.app import app
+from src.view_users import user_bp
+from src.view_medias import medias_bp
+from src.view_tweets import tweets_bp
+from src.exceptions import UnicornException
 
 app.register_blueprint(user_bp, url_prefix="/api/users")
 app.register_blueprint(medias_bp, url_prefix="/api/medias")
@@ -31,21 +29,6 @@ def handle_exception_418(e):
 
 
 app.register_error_handler(418, handle_exception_418)
-
-#
-# @app.route('/colors/<palette>/')
-# @swag_from('swagger/users.yml', validation=False)
-# def colors(palette):
-#     all_colors = {
-#         'cmyk': ['cyan', 'magenta', 'yellow', 'black'],
-#         'rgb': ['red', 'green', 'blue']
-#     }
-#     if palette == 'all':
-#         result = all_colors
-#     else:
-#         result = {palette: all_colors.get(palette)}
-#
-#     return make_response(jsonify(result), 200)
 
 
 if __name__ == "__main__":
