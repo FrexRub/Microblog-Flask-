@@ -4,6 +4,7 @@ from dataclasses import dataclass
 
 BASE_DIR = Path(__file__).parent
 
+
 @dataclass(slots=True)
 class Setting:
     # postgres_user: str = os.getenv("POSTGRES_USER", "test")
