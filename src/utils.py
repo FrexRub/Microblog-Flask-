@@ -9,6 +9,8 @@ from src.schemas import UserSchema, LikeSchema, TweetSchema
 from src.exceptions import UnicornException
 from src.models import User, TweetMedia, Tweet, LikesTweet
 
+API_KEY_DEFAULT = "test"
+
 
 def get_user_by_apy_key(apy_key_user: str) -> Optional[User]:
     """
@@ -397,3 +399,42 @@ def out_tweets_user(apy_key_user: str) -> List[TweetSchema]:
         me_tweets.append(tweet)
 
     return me_tweets
+
+
+def add_data_to_db() -> None:
+    """
+    Создаёт таблицы в случае пустой БД
+    :return: None
+    """
+    is_empty: bool = check_user_is_empty()
+
+    if is_empty:
+        user_1: User = User(
+            name="Ivan", apy_key_user=API_KEY_DEFAULT
+        )
+        user_2: User = User(
+            name="Lena", apy_key_user=f"{API_KEY_DEFAULT}1"
+        )
+        user_3: User = User(
+            name="Dasha", apy_key_user=f"{API_KEY_DEFAULT}2"
+        )
+        user_4: User = User(
+            name="Petr", apy_key_user=f"{API_KEY_DEFAULT}3"
+        )
+
+        db.session.add_all([user_1, user_2, user_3, user_4])
+        user_1.following.append(user_2)
+        user_2.following.append(user_3)
+        user_3.following.append(user_1)
+        db.session.commit()
+
+
+def check_user_is_empty() -> bool:
+    """
+    Проверка наличия записей в таблицы Users
+    :return: bool
+        состояние таблицы (True: пустая, False: с данными)
+    """
+    query = db.session.execute(db.select(User))
+    res = query.scalars().first()
+    return not bool(res)

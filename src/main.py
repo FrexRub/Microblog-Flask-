@@ -2,7 +2,8 @@ from flask import json
 from flasgger import Swagger
 from werkzeug.exceptions import default_exceptions
 
-from src.app import app
+from src.app import app, db
+from src.utils import add_data_to_db
 from src.view_users import user_bp
 from src.view_medias import medias_bp
 from src.view_tweets import tweets_bp
@@ -28,8 +29,13 @@ def handle_exception_418(e):
     return response
 
 
-app.register_error_handler(418, handle_exception_418)
+@app.before_request
+def create_bd():
+    db.create_all()
+    add_data_to_db()
 
+
+app.register_error_handler(418, handle_exception_418)
 
 if __name__ == "__main__":
     app.run(debug=True)
