@@ -12,8 +12,6 @@ from src.schemas import MediaOutSchema
 
 medias_bp = Blueprint('medias_bp', __name__)
 
-
-# PATH_PROJECT: str = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PATH_MEDIA: str = os.path.join(PATH_PROJECT, "media")
 
 
@@ -47,15 +45,12 @@ def post_medias():
         file.close()
 
     if filename != "out_test.jpg":
-        old_name: str = os.path.join(PATH_MEDIA, filename)
-        new_name: str = os.path.join(PATH_MEDIA,(str(datetime.datetime.now()) + "_" + filename))
-        print("old_name", old_name, "new_name", new_name, sep="\n")
-        # with open(old_name, "rb") as f_old:
-        #     file = f_old.read()
-        # with open(new_name, "wb") as f_new:
-        #     f_new.write(file)
+        old_name_full: str = os.path.join(PATH_MEDIA, filename)
+        new_name_full: str = os.path.join(PATH_MEDIA, (str(datetime.datetime.now()) + "_" + filename))
+        new_name: str = str(datetime.datetime.now()) + "_" + filename
+        print("old_name", old_name_full, "new_name", new_name_full, sep="\n")
         try:
-            os.rename(old_name, new_name)
+            os.rename(old_name_full, new_name_full)
         except FileNotFoundError as exc:
             raise UnicornException(
                 result=False, error_type="ErrorLoadFile", error_message=str(exc)

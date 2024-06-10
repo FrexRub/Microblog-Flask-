@@ -133,7 +133,6 @@ def add_file_media(apy_key_user: str, name_file: str):
         )
 
     new_media: TweetMedia = TweetMedia(name_file=name_file)
-
     try:
         db.session.add(new_media)
         db.session.commit()
