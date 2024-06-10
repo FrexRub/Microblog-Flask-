@@ -4,13 +4,16 @@ from flask import Blueprint, make_response, request, jsonify
 from typing import List
 from werkzeug.utils import secure_filename
 
+from src.app import app
+from src.config import PATH_PROJECT
 from src.exceptions import UnicornException
 from src.utils import add_file_media
 from src.schemas import MediaOutSchema
 
 medias_bp = Blueprint('medias_bp', __name__)
 
-PATH_PROJECT: str = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# PATH_PROJECT: str = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PATH_MEDIA: str = os.path.join(PATH_PROJECT, "media")
 
 
@@ -28,46 +31,42 @@ def post_medias():
             error_type="Ключ не задан",
             error_message="Ключ пользователя не задан",
         )
-    print("api_key", api_key)
-
     file = request.files["file"]
-    file_name: str = str(datetime.datetime.now()) + "_" + secure_filename(file.filename)
-
-    print("file_name", file_name)
+    filename = secure_filename(file.filename)
 
     if "test_file.jpg" in file.filename:
-        file_path: str = "out_test.jpg"
-    else:
-        file_path: str = os.path.join(PATH_MEDIA, file_name)
+        filename: str = "out_test.jpg"
 
     try:
-        # with open(file_path, "wb") as f:
-        #     f.write(file.file.read())
-        print("file_path", file_path)
-        file.save(file_path)
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
     except Exception as exc:
         raise UnicornException(
             result=False, error_type="ErrorLoadFile", error_message=str(exc)
         )
+    finally:
+        file.close()
 
-    res = add_file_media(apy_key_user=api_key, name_file=file_name)
-    if isinstance(res, str):
-        err: List[str] = res.split("&")
-        raise UnicornException(
-            result=False,
-            error_type=err[0].strip(),
-            error_message=err[1].strip(),
-        )
-
-    # media_info = {
-    #     "result": True,
-    #     "media_id": res
-    # }
-
-    # media_schema = MediaOutSchema()
-    # media_info = media_schema(rusult=True, media_id=res)
+    if filename != "out_test.jpg":
+        old_name: str = os.path.join(PATH_MEDIA, filename)
+        new_name: str = os.path.join(PATH_MEDIA,(str(datetime.datetime.now()) + "_" + filename))
+        print("old_name", old_name, "new_name", new_name, sep="\n")
+        # with open(old_name, "rb") as f_old:
+        #     file = f_old.read()
+        # with open(new_name, "wb") as f_new:
+        #     f_new.write(file)
+        try:
+            os.rename(old_name, new_name)
+        except FileNotFoundError as exc:
+            raise UnicornException(
+                result=False, error_type="ErrorLoadFile", error_message=str(exc)
+            )
+        except PermissionError as exc:
+            raise UnicornException(
+                result=False, error_type="ErrorLoadFile", error_message=str(exc)
+            )
+    else:
+        new_name: str = filename
+    res = add_file_media(apy_key_user=api_key, name_file=new_name)
 
     media_info = MediaOutSchema().dump(dict(rusult=True, media_id=res))
-
-    # return make_response(jsonify(media_info), 200)
-    return make_response(jsonify("media_info"), 200)
+    return make_response(media_info, 201)
