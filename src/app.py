@@ -2,6 +2,7 @@ import logging
 import os
 from logging.handlers import RotatingFileHandler
 from flask import Flask
+from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 
@@ -39,3 +40,4 @@ app.logger.info("Microblog start")
 
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
+CORS(app)
