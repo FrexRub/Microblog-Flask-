@@ -4,7 +4,7 @@ from typing import Tuple, List, Optional, Literal
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm.exc import StaleDataError
 
-from src.app import db, UPLOAD_FOLDER
+from src.app import db, UPLOAD_FOLDER, app
 from src.schemas import UserSchema, LikeSchema, TweetSchema
 from src.exceptions import UnicornException
 from src.models import User, TweetMedia, Tweet, LikesTweet
@@ -315,6 +315,7 @@ def delete_like_tweet(apy_key_user: str, id_tweet: int) -> bool:
     :return: bool
         статус выполнения операции
     """
+    app.logger.info("Start delete like tweet")
     data_user: Optional[User] = get_user_by_apy_key(apy_key_user)
 
     if data_user is None:
@@ -333,7 +334,7 @@ def delete_like_tweet(apy_key_user: str, id_tweet: int) -> bool:
         )
     )
     like_tweet: Optional[LikesTweet] = query.scalars().one_or_none()
-
+    app.logger.info(f"find like tweet {like_tweet.tweet_id}")
     if like_tweet:
         try:
             db.session.delete(like_tweet)
