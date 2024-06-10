@@ -1,6 +1,6 @@
 import os
 import datetime
-from flask import Blueprint, make_response, request, jsonify
+from flask import Blueprint, make_response, request
 from typing import List
 from werkzeug.utils import secure_filename
 
