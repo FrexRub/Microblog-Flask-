@@ -32,7 +32,8 @@ def post_medias():
             error_message="Ключ пользователя не задан",
         )
     file = request.files["file"]
-    filename = secure_filename(file.filename)
+    # filename = "pref_" + secure_filename(file.filename)
+    filename = str(datetime.datetime.now()) + "_" + secure_filename(file.filename)
 
     if "test_file.jpg" in file.filename:
         filename: str = "out_test.jpg"
@@ -43,30 +44,32 @@ def post_medias():
         raise UnicornException(
             result=False, error_type="ErrorLoadFile", error_message=str(exc)
         )
-    finally:
-        file.close()
+    # finally:
+    #     file.close()
+    #
+    # if filename != "out_test.jpg":
+    #     old_name: str = os.path.join(PATH_MEDIA, filename)
+    #     new_name: str = os.path.join(PATH_MEDIA,(str(datetime.datetime.now()) + "_" + filename))
+    #     print("old_name", old_name, "new_name", new_name, sep="\n")
+    #     # with open(old_name, "rb") as f_old:
+    #     #     file = f_old.read()
+    #     # with open(new_name, "wb") as f_new:
+    #     #     f_new.write(file)
+    #     try:
+    #         os.rename(old_name, new_name)
+    #     except FileNotFoundError as exc:
+    #         raise UnicornException(
+    #             result=False, error_type="ErrorLoadFile", error_message=str(exc)
+    #         )
+    #     except PermissionError as exc:
+    #         raise UnicornException(
+    #             result=False, error_type="ErrorLoadFile", error_message=str(exc)
+    #         )
+    # else:
+    #     new_name: str = filename
+    # res = add_file_media(apy_key_user=api_key, name_file=new_name)
 
-    if filename != "out_test.jpg":
-        old_name: str = os.path.join(PATH_MEDIA, filename)
-        new_name: str = os.path.join(PATH_MEDIA,(str(datetime.datetime.now()) + "_" + filename))
-        print("old_name", old_name, "new_name", new_name, sep="\n")
-        # with open(old_name, "rb") as f_old:
-        #     file = f_old.read()
-        # with open(new_name, "wb") as f_new:
-        #     f_new.write(file)
-        try:
-            os.rename(old_name, new_name)
-        except FileNotFoundError as exc:
-            raise UnicornException(
-                result=False, error_type="ErrorLoadFile", error_message=str(exc)
-            )
-        except PermissionError as exc:
-            raise UnicornException(
-                result=False, error_type="ErrorLoadFile", error_message=str(exc)
-            )
-    else:
-        new_name: str = filename
-    res = add_file_media(apy_key_user=api_key, name_file=new_name)
+    res = add_file_media(apy_key_user=api_key, name_file=filename)
 
     media_info = MediaOutSchema().dump(dict(rusult=True, media_id=res))
     return make_response(media_info, 201)
