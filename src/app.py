@@ -1,4 +1,6 @@
+import logging
 import os
+from logging.handlers import RotatingFileHandler
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
@@ -8,6 +10,9 @@ from src.config import PATH_PROJECT
 
 
 UPLOAD_FOLDER: str = os.path.join(PATH_PROJECT, "media")
+file_handler = RotatingFileHandler("microblog.log", maxBytes=10240, backupCount=10)
+file_handler.setFormatter(logging.Formatter("%(asctime)s %(levelname)s: %(message)s"))
+file_handler.setLevel(logging.INFO)
 
 class MyServer(Flask):
     def __init__(self, *args, **kwargs):
@@ -28,6 +33,9 @@ class MyServer(Flask):
 
 app = MyServer(__name__)
 app.set_config()
+app.logger.addHandler(file_handler)
+app.logger.setLevel(logging.INFO)
+app.logger.info("Microblog start")
 
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
