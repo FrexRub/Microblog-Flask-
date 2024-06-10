@@ -4,7 +4,7 @@ from typing import Tuple, List, Optional, Literal
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm.exc import StaleDataError
 
-from src.app import db
+from src.app import db, UPLOAD_FOLDER
 from src.schemas import UserSchema, LikeSchema, TweetSchema
 from src.exceptions import UnicornException
 from src.models import User, TweetMedia, Tweet, LikesTweet
@@ -208,7 +208,7 @@ def name_file_from_tweet_medias(list_id_name_file: List[int]) -> List[str]:
 def delete_files_from_tweet(id_files_tweet: List[int]) -> None:
     name_files: List[str] = name_file_from_tweet_medias(id_files_tweet)
     for i_file in name_files:
-        name_file: str = os.path.join("media", i_file)
+        name_file: str = os.path.join(UPLOAD_FOLDER, i_file)
         os.remove(name_file)
 
 
