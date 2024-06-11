@@ -24,6 +24,7 @@ class MyServer(Flask):
         self.config['JSON_SORT_KEYS'] = False
         self.config['SECRET_KEY'] = 'secret'
         self.config['SQLALCHEMY_DATABASE_URI'] = db_url
+        self.config['SQLALCHEMY_ECHO'] = False
         self.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
         self.config['SWAGGER'] = {
             'title': 'API Microlog',
