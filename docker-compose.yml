@@ -32,15 +32,16 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
-    command: uvicorn src.main:app --reload --host 0.0.0.0 --port 8000
+#    command: gunicorn src.main:app --reload --host 0.0.0.0 --port 5000
+    command: /app/.venv/bin/gunicorn --bind 0.0.0.0:5000 src.main:app
     env_file:
       - .env-postgresql
     volumes:
       - ./media:/app/media
     expose:
-      - 8000
+      - 5000
     ports:
-      - 8000:8000
+      - 5000:5000
     depends_on:
       - db
     networks:

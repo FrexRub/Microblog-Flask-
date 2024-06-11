@@ -1,6 +1,6 @@
 from sqlalchemy.ext.hybrid import hybrid_property
 
-from app import db
+from src.app import db
 
 followers = db.Table(
     "followers",
@@ -15,9 +15,7 @@ followers = db.Table(
 
 class LikesTweet(db.Model):
     __tablename__ = "likes_tweet"
-    __table_args__ = (
-        db.UniqueConstraint("user_id", "tweet_id", name="idx_unique_user_tweet"),
-    )
+    __table_args__ = (db.UniqueConstraint("user_id", "tweet_id"),)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), primary_key=True)
     tweet_id = db.Column(db.Integer, db.ForeignKey("tweets.id"), primary_key=True)
 
@@ -44,6 +42,9 @@ class User(db.Model):
         backref=db.backref("followers", lazy="dynamic"),
         lazy="dynamic",
     )
+
+    def __repr__(self):
+        return f"User {self.id} {self.name}"
 
 
 class Tweet(db.Model):
@@ -76,6 +77,9 @@ class Tweet(db.Model):
             .where(LikesTweet.tweet_id == cls.id)
             .label("like_count")
         )
+
+    def __repr__(self):
+        return f"Tweet {self.id} {self.tweet_data}"
 
 
 class TweetMedia(db.Model):
