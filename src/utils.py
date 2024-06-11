@@ -297,12 +297,14 @@ def add_like_tweet(apy_key_user: str, id_tweet: int) -> bool:
     )
     like_tweet: Optional[LikesTweet] = query.scalars().one_or_none()
 
+    # Если лайка на твите нет, ставим. Иначе - удаляем
     if like_tweet is None:
         data_user.like_tweet.append(tweet)
         db.session.commit()
         return True
     else:
-        return False
+        return delete_like_tweet(apy_key_user, id_tweet)
+        # return False
 
 
 def delete_like_tweet(apy_key_user: str, id_tweet: int) -> bool:
