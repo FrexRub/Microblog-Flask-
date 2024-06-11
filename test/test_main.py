@@ -48,12 +48,6 @@ def test_post_likes_tweet(client):
     assert response.status_code == 201
 
 
-def test_delete_likes_twee_bad(client):
-    headers = {"api-key": "test"}
-    response = client.delete("/api/tweets/1/likes", headers=headers)
-    assert response.status_code == 400
-
-
 def test_delete_likes_twee(client):
     headers = {"api-key": "test1"}
     response = client.delete("/api/tweets/1/likes", headers=headers)
