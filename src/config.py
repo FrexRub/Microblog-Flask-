@@ -5,6 +5,7 @@ from dataclasses import dataclass
 BASE_DIR = Path(__file__).parent.parent
 PATH_PROJECT: str = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+
 @dataclass(slots=True)
 class Setting:
     postgres_user: str = os.getenv("POSTGRES_USER", "test")

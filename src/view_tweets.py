@@ -49,7 +49,7 @@ def api_tweets():
             "result": True,
             "tweets": res
         }
-        return make_response(jsonify(tweet_info), 201)
+        return make_response(jsonify(tweet_info), 200)
 
 
 @tweets_bp.route("/<int:id>", methods=["DELETE"])
@@ -105,7 +105,7 @@ def tweet_likes(id: int):
     if request.method == "POST":
         res: bool = add_like_tweet(apy_key_user=api_key, id_tweet=id)
         if res:
-            status_code = 200
+            status_code = 201
         else:
             status_code = 400
 

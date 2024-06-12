@@ -36,16 +36,6 @@ def get_user_me():
         },
     }
 
-    # user_info = {
-    #     "result": True,
-    #     "user": {
-    #         "id": 1,
-    #         "name": "IVAN",
-    #         "followers": [],
-    #         "following": [],
-    #     },
-    # }
-
     return make_response(jsonify(user_info), 200)
 
 
